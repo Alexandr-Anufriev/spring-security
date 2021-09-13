@@ -10,8 +10,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import web.config.handler.LoginSuccessHandler;
+import web.model.Role;
+import web.model.User;
 import web.service.UserService;
-import web.service.UserServiceImpl;
+
+import javax.annotation.PostConstruct;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -53,5 +58,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             authenticationProvider.setUserDetailsService(userService);
 
             return authenticationProvider;
+    }
+    @PostConstruct
+    public void checkUsersInDB() {
+        checkUser("admin");
+        checkUser("user");
+        System.out.println("checkUsersInDB");
+    }
+
+    private void checkUser(String username) {
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            user = new User();
+            user.setUsername(username);
+            user.setPassword(username);
+            Set<Role> roleSet = new HashSet<>();
+            roleSet.add(new Role(2, "ROLE_USER"));
+            if (username.equals("admin")) {
+                roleSet.add(new Role(1, "ROLE_ADMIN"));
+            }
+            user.setRoles(roleSet);
+            userService.add(user);
+        }
     }
 }

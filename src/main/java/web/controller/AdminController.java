@@ -16,7 +16,7 @@ import java.util.*;
 @RequestMapping("/admin")
 public class AdminController {
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @GetMapping()
     public String getAdminsPage(Principal principal, Model model) { // principal - это инфо о тек пользователе
@@ -39,9 +39,7 @@ public class AdminController {
 	@GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") int id, Model model) {
         User user = userService.findByUsername(userService.getById(id).getUsername());
-        List<Role> roles = userService.listRoles();
         model.addAttribute("user", user);
-        model.addAttribute("role", roles);
         return "/admin/edit";
     }
     @PatchMapping("/{id}")
