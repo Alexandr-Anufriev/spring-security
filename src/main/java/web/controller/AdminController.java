@@ -31,7 +31,6 @@ public class AdminController {
 
     @PostMapping
 	public String create(@ModelAttribute("user") User user) {
-        user.setRoles(Collections.singleton(new Role(2, "ROLE_USER")));
 		userService.add(user);
 		return "redirect:/admin";
 	}
@@ -44,20 +43,19 @@ public class AdminController {
     }
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("user") User user) {
-        Set<Role> set = new HashSet<>();
-        set.add(new Role(2, "ROLE_USER"));
-        if((user.getUsername()).equals("admin")) {
-            set.add(new Role(1, "ROLE_ADMIN"));
-        }
-        user.setRoles(set);
-        System.out.println("patch" + user);
+//        Set<Role> set = new HashSet<>();
+//        set.add(new Role(2, "ROLE_USER"));
+//        if((user.getUsername()).equals("admin")) {
+//            set.add(new Role(1, "ROLE_ADMIN"));
+//        }
+//        user.setRoles(set);
+//        System.out.println("patch" + user);
         userService.update(user);
         return "redirect:/admin";
     }
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
-        User user = userService.getById(id);
-        userService.delete(user);
+    public String delete(@PathVariable("id") long id) {
+        userService.delete(id);
         return "redirect:/admin";
     }
 
